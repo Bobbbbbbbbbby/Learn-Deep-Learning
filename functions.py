@@ -40,7 +40,60 @@ class loss_functions:
         y = np.log(y)
         sum: np.float64 = np.sum(t * y)
         return -sum
+
+
+class TwoLayerNet:
+    def __init__(self, input_size, hidden_size, output_size) :
+        self.params = {}
+        self.params['W1'] = 0.01 * np.random.randn(input_size, hidden_size)
+        self.params['b1'] = np.zeros(hidden_size)
+        self.params['W2'] = 0.01 * np.random.randn(hidden_size, output_size)
+        self.params['b2'] = np.zeros(output_size)
+
+    def predict(self, x) :
+        W1 = self.params['W1']
+        W2 = self.params['W2']
+        b1 = self.params['b1']
+        b2 = self.params['b2']
+
+        a1 = b1 + np.dot(x, W1)
+        a1 = activation_functions.sigmoid(a1)
+
+        a2 = b2 + np.dot(a1, W2)
+        a2 = activation_functions.sigmoid(a2)
+
+        y = activation_functions.softmax(a2)
+
+        return y
     
+    # x is the input data, t is the supervision data
+    def loss(self, x, t) :
+        y = self.predict(x)
+        return loss_functions.cross_entrophy_error(y, t)
+    
+    def accuracy(self, x, t) :
+        y = self.predict(x)
+        y = np.argmax(y, axis = 1)
+        t = np.argmax(t, axis = 1)
+
+        accuracy = np.sum(y == t) / float(len(x))
+
+        return accuracy
+    
+    
+    def numerical_gradient(self, x, t) :
+        # use this lambda expression can pass the param of numerical_gradient to the loss function, which can not be achieved by 'def'
+        loss_W = lambda W: self.loss(x, t)
+
+        grads = {}
+        grads['W1'] = numerical_grad(loss_W, self.params['W1'])
+        grads['W2'] = numerical_grad(loss_W, self.params['W2'])
+        grads['b1'] = numerical_grad(loss_W, self.params['b1'])
+        grads['b2'] = numerical_grad(loss_W, self.params['b2'])
+
+        return grads
+
+
 def numerical_diff(f, x: np.ndarray) -> np.float64:
     h = np.float64(1e-4)
     return (f(x + h) - f(x - h)) / (2 * h)
