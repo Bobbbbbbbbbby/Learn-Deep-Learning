@@ -12,7 +12,7 @@ train_loss_list = []
 iters_num = 10000
 train_size = len(x_train)
 batch_size = 100
-learning_rate = 0.1
+learning_rate = 0.01
 
 network = TwoLayerNet(784, 50, 10)
 
@@ -27,5 +27,10 @@ for i in range(iters_num) :
         network.params[key] -= learning_rate * grad[key]
 
     loss = network.loss(x_batch, t_batch)
-    print(f"it: {i}\t, {i / iters_num}\t -- loss: {loss}")
+    print("it:", end=' ')
+    print(round(i, 5), end='\t')
+    print("loss:", end=' ')
+    print(round(loss, 5), end='\t')
+    print("--", end=' ')
+    print(round(i / iters_num, 5), )
     train_loss_list.append(loss)
