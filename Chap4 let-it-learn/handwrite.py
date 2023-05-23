@@ -1,6 +1,7 @@
-import os, sys
+import sys
+sys.path.append('.')
+sys.path.append('..')
 import numpy as np
-sys.path.append("..")
 from my_mnist import load_mnist
 from functions import TwoLayerNet
 
@@ -17,8 +18,8 @@ network = TwoLayerNet(784, 50, 10)
 
 for i in range(iters_num) :
     batch_mask = np.random.choice(train_size, batch_size)
-    x_batch = x_train(batch_mask)
-    t_batch = t_train(batch_mask)
+    x_batch = x_train[batch_mask]
+    t_batch = t_train[batch_mask]
 
     grad = network.numerical_gradient(x_batch, t_batch)
 

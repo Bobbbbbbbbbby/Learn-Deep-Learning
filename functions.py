@@ -8,20 +8,20 @@ class activation_functions:
     def __init__(self):
         return
     
-    def step_function(self, x: np.float64) -> np.float64 :
+    def step_function(self, x: np.ndarray) -> np.ndarray :
         y = x > 0
         ret = y.astype(np.float64)
         return ret
     
-    def sigmoid(self, x: np.float64) -> np.float64 :
+    def sigmoid(self, x: np.ndarray) -> np.ndarray :
         y = 1.0 / (1.0 + np.exp(-x))
         return y
     
-    def ReLU(self, x: np.float64) -> np.float64:
+    def ReLU(self, x: np.ndarray) -> np.ndarray:
         y = np.maximum(0, x)
         return y
 
-    def softmax(self, x: np.ndarray) -> np.float64:
+    def softmax(self, x: np.ndarray) -> np.ndarray:
         a = np.exp(x - np.max(x))
         b = np.sum(np.exp(x - np.max(x)))
         y = a / b
@@ -51,25 +51,27 @@ class TwoLayerNet:
         self.params['b2'] = np.zeros(output_size)
 
     def predict(self, x) :
+        func = activation_functions()
+
         W1 = self.params['W1']
         W2 = self.params['W2']
         b1 = self.params['b1']
         b2 = self.params['b2']
 
         a1 = b1 + np.dot(x, W1)
-        a1 = activation_functions.sigmoid(a1)
+        z1 = func.sigmoid(a1)
 
-        a2 = b2 + np.dot(a1, W2)
-        a2 = activation_functions.sigmoid(a2)
+        a2 = b2 + np.dot(z1, W2)
 
-        y = activation_functions.softmax(a2)
+        y = func.softmax(a2)
 
         return y
     
     # x is the input data, t is the supervision data
     def loss(self, x, t) :
+        func = loss_functions()
         y = self.predict(x)
-        return loss_functions.cross_entrophy_error(y, t)
+        return func.cross_entrophy_error(y, t)
     
     def accuracy(self, x, t) :
         y = self.predict(x)
